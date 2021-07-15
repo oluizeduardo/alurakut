@@ -1,6 +1,6 @@
-import { createGlobalStyle } from 'styled-components'
-import '../styles/globals.css'
-import {AlurakutStyles} from '../src/lib/AlurakutCommons'
+import { createGlobalStyle } from 'styled-components';
+import '../styles/globals.css';
+import {AlurakutStyles} from '../src/lib/AlurakutCommons';
 
 const GlobalStyle = createGlobalStyle`
   *{

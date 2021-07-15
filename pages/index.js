@@ -1,13 +1,13 @@
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
-import {AlurakutMenu, OrkutNostalgicIconSet} from '../src/lib/AlurakutCommons'
+import {AlurakutMenu, OrkutNostalgicIconSet} from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 function ProfileSidebar(){
   const gitHubUser = 'oluizeduardo';
   return(
     <Box>
-      <img src={`https://github.com/${gitHubUser}.png`} style={{borderRadius: '8px'}} />
+      <img src={`https://github.com/${gitHubUser}.png`} style={{borderRadius: '8px'}}  alt=''/>
     </Box>
   )
 }
@@ -46,7 +46,7 @@ export default function Home() {
                 return (
                   <li>
                     <a href={`/users/${atualItem}`} key={atualItem}>
-                      <img src = {`https://github.com/${atualItem}.png`} />
+                      <img src = {`https://github.com/${atualItem}.png`} alt='' />
                       <span>{atualItem}</span>
                     </a>
                   </li>
