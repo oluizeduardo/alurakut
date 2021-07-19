@@ -1,4 +1,6 @@
 import React from 'react';
+import nookies from 'nookies';
+import jwt from 'jsonwebtoken';
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
 import {AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet} from '../src/lib/AlurakutCommons';
@@ -33,15 +35,15 @@ async function getCommunities(){
   }];
 }
 
-function ProfileSidebar(){
-  const gitHubUser = 'oluizeduardo';
+function ProfileSidebar(props){
+  const githubUsername = props.githubUser;
   return(
     <Box as="aside">
-      <img src={`https://github.com/${gitHubUser}.png`} style={{borderRadius: '8px'}}  alt=''/>
+      <img src={`https://github.com/${githubUsername}.png`} style={{borderRadius: '8px'}}  alt=''/>
       <hr/>
       <p>
-        <a className="boxLink" href={`https://github.com/${gitHubUser}`}>
-          @{gitHubUser}
+        <a className="boxLink" href={`https://github.com/${githubUsername}`}>
+          @{githubUsername}
         </a>
       </p>
       <hr/>
@@ -72,15 +74,17 @@ function ProfileRelationsBox({ items, title, limit, total }) {
   )
 }
 
-export default function Home() {
+export default function Home(props) {
+
+  const usuarioAleatorio = props.githubUser;
 
   const [followers, setFollowers] = React.useState([]);
   const [following, setFollowing] = React.useState([]);
   const [comunities, setComunities] = React.useState([]);
 
   React.useEffect(async () => {
-    setFollowers(await getFollowers('oluizeduardo'));
-    setFollowing(await getFollowing('oluizeduardo'));
+    setFollowers(await getFollowers(usuarioAleatorio));
+    setFollowing(await getFollowing(usuarioAleatorio));
     setComunities(await getCommunities());
   }, [])
 
@@ -89,12 +93,12 @@ export default function Home() {
       <AlurakutMenu />
       <MainGrid>
         <div className="profileArea" style={{gridArea: 'profileArea'}}>
-          <ProfileSidebar/>        
+          <ProfileSidebar githubUser={usuarioAleatorio}/>        
         </div>
         <div className="welcomeArea" style={{gridArea: 'welcomeArea'}}>
           <Box>
             <h1 className='title'>
-              Bem vindo, Luiz.
+              Bem vindo(a).
             </h1>
             <OrkutNostalgicIconSet/>
           </Box>
@@ -143,4 +147,34 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(ctx) {
+  const cookies = nookies.get(ctx);
+  const token = cookies.USER_TOKEN;
+  const decodedToken = jwt.decode(token);
+  const githubUser = decodedToken?.githubUser;
+
+  if (!githubUser) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
+  }
+
+  // const followers = await fetch(`https://api.github.com/users/${githubUser}/followers`)
+  //   .then((res) => res.json())
+  //   .then(followers => followers.map((follower) => ({
+  //     id: follower.id,
+  //     name: follower.login,
+  //     image: follower.avatar_url,
+  //   })));
+
+  return {
+    props: {
+      githubUser,
+    }
+  }
 }
