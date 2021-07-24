@@ -27,11 +27,6 @@ async function getCommunities(){
     id: '32132165489979546544',//randon id.
     title: 'Eu odeio acordar cedo',
     image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
-  },
-  {
-    id: '321321654899795444',//randon id.
-    title: 'Alura',
-    image: 'https://placehold.it/300x300'
   }];
 }
 
@@ -39,10 +34,11 @@ function ProfileSidebar(props){
   const githubUsername = props.githubUser;
   return(
     <Box as="aside">
+      <title>Alurakut</title>
       <img src={`https://github.com/${githubUsername}.png`} style={{borderRadius: '8px'}}  alt=''/>
       <hr/>
       <p>
-        <a className="boxLink" href={`https://github.com/${githubUsername}`}>
+        <a className="boxLink" href={`https://github.com/${githubUsername}`} target="_blank">
           @{githubUsername}
         </a>
       </p>
@@ -149,32 +145,29 @@ export default function Home(props) {
   )
 }
 
-export async function getServerSideProps(ctx) {
-  const cookies = nookies.get(ctx);
+export async function getServerSideProps(context) {
+  const cookies = nookies.get(context)
   const token = cookies.USER_TOKEN;
-  const decodedToken = jwt.decode(token);
-  const githubUser = decodedToken?.githubUser;
+  const { isAuthenticated } = await fetch('https://alurakut-jwfelipee.vercel.app/api/auth', { //link oferecido no servidor do Discord    
+    headers: {
+        Authorization: token
+      }      
+  })
+  .then((resposta) => resposta.json())
 
-  if (!githubUser) {
+  if(!isAuthenticated) {
     return {
       redirect: {
         destination: '/login',
         permanent: false,
-      },
+      }
     }
   }
 
-  // const followers = await fetch(`https://api.github.com/users/${githubUser}/followers`)
-  //   .then((res) => res.json())
-  //   .then(followers => followers.map((follower) => ({
-  //     id: follower.id,
-  //     name: follower.login,
-  //     image: follower.avatar_url,
-  //   })));
-
+  const { githubUser } = jwt.decode(token);
   return {
     props: {
-      githubUser,
-    }
+      githubUser
+    }, 
   }
-}
+} 
