@@ -58,7 +58,7 @@ function ProfileRelationsBox({ items, title, limit, total }) {
         {items.slice(0, limit).map((itemAtual) => {
           return (
             <li key={itemAtual.id}>
-              <a href={`https://github.com/${itemAtual.title}`}>
+              <a href={`https://github.com/${itemAtual.title}`} target="_blank">
                 <img src={itemAtual.image} />
                 <span>{itemAtual.title}</span>
               </a>
